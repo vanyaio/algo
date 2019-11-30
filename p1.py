@@ -1,5 +1,6 @@
 import random
 import itertools
+import time
 
 def dfs(v, used, ans, edges):
     used[v] = True
@@ -22,8 +23,10 @@ def apply_perm(edges):
     v = len(edges)
     perm = ()
     while (perm == ()):
-        for i in itertools.permutations([i for i in range(v)]):
-            if (random.randint(1, v) == 1):
+        ls = [i for i in range(v)]
+        it = itertools.permutations(ls)
+        for i in it:
+            if (random.randint(1, 100) == 1):
                 perm = i
                 break
 
@@ -49,8 +52,35 @@ def gen_by_ev(e_num, v_num):
             e_num -= 1
     return apply_perm(edges)
 
+def get_ev_by_sum(sum):
+    while True:
+        e = random.randint(0, sum - 1)
+        v = sum - e
+        if (e > (v - 1) * v / 2):
+            continue
+        else:
+            return (e, v)
+
+def main():
+    sum = 100000
+    steps = 31
+    delta = 5000
+    for i in range(steps):
+        e, v = get_ev_by_sum(sum)
+        edges = gen_by_ev(e, v)
+        
+        start = time.time()
+        topsort(edges)
+        end = time.time()
+        print(end - start)
+
+        print(sum)
+        sum += delta
+
+
 if __name__ == "__main__":
-    edges = gen_by_ev(7, 5)
-    print(edges)
-    print(topsort(edges))
+    #  edges = gen_by_ev(7, 5)
+    #  print(edges)
+    #  print(topsort(edges))
+    main()
     
