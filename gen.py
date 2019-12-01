@@ -1,4 +1,5 @@
 import random
+import statistics
 import itertools
 import time
 import numpy as np
@@ -66,8 +67,8 @@ def draw(es, vs, ts):
 
 def main():
     sum = 10000
-    steps = 15
-    delta = 1000
+    steps = 10 
+    delta = 10000
     ratio = 5 
     es = []
     vs = []
@@ -78,13 +79,16 @@ def main():
         e, v = get_ev_by_sum(sum, ratio)
         edges = gen_by_ev(e, v)
         
-        start = time.time()
-        topsort(edges)
-        end = time.time()
+        av = []
+        for j in range(10):
+            start = time.time()
+            topsort(edges)
+            end = time.time()
+            av.append(end - start)
 
         es.append(e)
         vs.append(v)
-        ts.append(end - start)
+        ts.append(statistics.mean(av))
 
         sum += delta
 
