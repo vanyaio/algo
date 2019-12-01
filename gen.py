@@ -55,47 +55,69 @@ def get_ev_by_sum(sum, ratio):
         print("ratio is incorrect!!!")
     return (e, v)
 
-def draw(es, vs, ts):
+def draw(es, vs, ts, z_str, title_str):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.plot(np.array(es), np.array(vs), np.array(ts))
     ax.set_xlabel("E")
     ax.set_ylabel("V")
-    ax.set_zlabel("time(sec)")
-    ax.set_title("Time from Edges and Vertices")
+    ax.set_zlabel(z_str)
+    ax.set_title(title_str)
     plt.show()
 
 def main():
-    sum = 10000
-    steps = 10 
-    delta = 10000
-    ratio = 5 
+    sum = 1000
+    steps = 11 
+    delta = 100
+    ratio = 3
     es = []
     vs = []
     ts = []
     sumarr = []
+    rel = []
     for i in range(steps):
         sumarr.append(sum)
         e, v = get_ev_by_sum(sum, ratio)
         edges = gen_by_ev(e, v)
+        e2, v2 = get_ev_by_sum(2 * sum, ratio)
+        edges2 = gen_by_ev(e2, v2)
         
         av = []
+        av2 = []
+        rel_av = []
         for j in range(10):
             start = time.time()
             topsort(edges)
             end = time.time()
-            av.append(end - start)
+            t = end - start
+            av.append(t)
+
+            start = time.time()
+            topsort(edges2)
+            end = time.time()
+            t2 = end - start
+            av2.append(t2)
+            rel_av.append(t2 / t)
+            
+        av = statistics.mean(av)
+        av2 = statistics.mean(av2)
+        rel_av = statistics.mean(rel_av)
 
         es.append(e)
         vs.append(v)
-        ts.append(statistics.mean(av))
+        ts.append(av)
+        rel.append(rel_av)
 
         sum += delta
 
-    draw(es, vs, ts)
+    draw(es, vs, ts, "time(sec)", "Time from Edges and Vertices")
+    draw(es, vs, rel, "double-ratio", "double-ratio from Edges and Vertices")
     print("Sum, Time")
     for i in range(len(sumarr)):
         print(str(sumarr[i]) + " " + str(ts[i]))
+    print("Sum, double-ratio")
+    for i in range(len(sumarr)):
+        print(str(sumarr[i]) + " " + str(rel[i]))
 
 
 
